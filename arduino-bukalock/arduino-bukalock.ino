@@ -13,13 +13,14 @@
 #include <Servo.h>
 
 // defines pins numbers
-const int trigPin = 9;
-const int echoPin = 10;
-const int buzz = 11;
 const int pinA = 0;
 const int pinB = 1;
 const int pinC = 2;
 const int pinD = 3;
+const int trigPin = 9;
+const int echoPin = 10;
+const int servoPin = 11;
+const int buttonPin = A5; 
 
 // defines led 7-segment
 int num_array[10][4] = {  { HIGH,LOW,LOW,LOW },     // 0
@@ -42,25 +43,36 @@ int pos = 0;    // variable to store the servo position
 long duration;
 int distance;
 bool lock = false;
+int buttonState = 0;  
 
 void servoLock();
 void servoUnlock();
 void numWrite(int);
+void checkPushButton();
 
 void setup() {
-  pinMode(trigPin, OUTPUT); // Sets the trigPin as an Output
-  pinMode(echoPin, INPUT); // Sets the echoPin as an Input
-  pinMode(buzz, OUTPUT); //
   pinMode(pinA, OUTPUT);
   pinMode(pinB, OUTPUT);
   pinMode(pinC, OUTPUT);
-  pinMode(pinD, OUTPUT); 
-//  myservo.attach(3);  // attaches the servo on pin 3 to the servo object
+  pinMode(pinD, OUTPUT);
+  pinMode(trigPin, OUTPUT);   // Sets the trigPin as an Output
+  pinMode(echoPin, INPUT);    // Sets the echoPin as an Input
+  pinMode(buttonPin, INPUT);  // Sets the buttonPin as an Input
+  pinMode(13, OUTPUT);
+//  pinMode(servoPin, OUTPUT); //
+//  myservo.attach(servoPin);  // attaches the servo on servoPin to the servo object
 //  Serial.begin(9600); // Starts the serial communication
 //  servoLock();
 }
 
 void loop() {
+
+  // 7-segment
+  numWrite(9);
+
+  // Pushbutton
+  checkPushButton();
+  
   // Clears the trigPin
   digitalWrite(trigPin, LOW);
   delayMicroseconds(2);
@@ -69,10 +81,6 @@ void loop() {
   digitalWrite(trigPin, HIGH);
   delayMicroseconds(10);
   digitalWrite(trigPin, LOW);
-
-  // Test 7-segment
-  numWrite(9);
-  delay(1000);
   
   // Reads the echoPin, returns the sound wave travel time in microseconds
   duration = pulseIn(echoPin, HIGH);
@@ -80,12 +88,12 @@ void loop() {
   // Calculating the distance
   distance = duration*0.034/2;
   
-//  // Prints the distance on the Serial Monitor
-//  Serial.print("Distance: ");
-//  Serial.println(distance);
-//  if(distance < 8 && lock){
-//    servoUnlock();
-//  }
+  // Prints the distance on the Serial Monitor
+  Serial.print("Distance: ");
+  Serial.println(distance);
+  if(distance < 8 && lock){
+    servoUnlock();
+  }
 }
 
 void servoLock()
@@ -111,11 +119,24 @@ void servoUnlock()
   lock = false;
 }
 
-// this functions writes values to the sev seg pins  
+// Fungsi untuk menuliskan angka pada 7-segment LED 
 void numWrite(int number) 
 {
     digitalWrite(pinA, num_array[number-1][0]); 
     digitalWrite(pinB, num_array[number-1][1]); 
     digitalWrite(pinC, num_array[number-1][2]); 
     digitalWrite(pinD, num_array[number-1][3]);
+}
+
+void checkPushButton()
+{
+    buttonState = digitalRead(buttonPin);
+    if (buttonState == LOW) {
+      // Unlock the servo
+      lock = false;
+      digitalWrite(13, HIGH);
+    } else {
+      // turn LED off:
+      digitalWrite(13, LOW);
+    }
 }
