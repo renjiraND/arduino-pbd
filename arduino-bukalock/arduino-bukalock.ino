@@ -21,12 +21,13 @@ const int pinC = 2;
 const int pinD = 3;
 const int pinA = 4;
 const int pinB = 5;
-const int trigPin = 6;
+const int trigPin = 15;
 const int echoPin = 7;
 const int buttonPin = 8;
-const int servoPin = 14;
-const int ssPin = 10;
 const int rstPin = 9;
+const int ssPin = 10;
+const int servoPin = 14;
+int pinLed = 6;
 
 // Defines LED 7-Segment Number
 int num_array[10][4] = {  { HIGH,LOW,LOW,LOW },     // 0
@@ -70,6 +71,7 @@ void setup() {
   pinMode(echoPin, INPUT);    // Sets the echoPin as an Input
   pinMode(buttonPin, INPUT);  // Sets the buttonPin as an Input
   pinMode(13, OUTPUT);
+  pinMode(pinLed, OUTPUT);
   myservo.attach(servoPin);  // attaches the servo on servoPin to the servo object
   Serial.begin(9600); // Starts the serial communication
   SPI.begin();      // Initiate  SPI bus
@@ -80,17 +82,11 @@ void setup() {
 
 void loop() {
   lcd.begin();
+  analogWrite(pinLed, 100);
   printIdle();
 
   // 7-segment
-  numWrite(0);
-  delay(1000);
-  numWrite(1);
-  delay(1000);
-  numWrite(2);
-  delay(1000);
   numWrite(3);
-  delay(1000);
 
   // Pushbutton
   checkPushButton();
@@ -116,6 +112,7 @@ void servoUnlock()
 {
   if(lock == true){
     printSuccess();
+    analogWrite(pinLed, 255);
     myservo.write(0);
     delay(10000);
   }
