@@ -6,6 +6,7 @@ Sistem arduino yang bernama BukaLock ini adalah sistem yang digunakan untuk mens
 
 ## Panduan Instalasi
 1. Rakit Arduino sesuai gambar berikut.
+![alt text](https://gitlab.informatika.org/if3111-2019-renrairah/arduino/blob/master/bukalock_bb.png)
 2. Pastikan sudah memiliki aplikasi Arduino IDE pada desktop Anda
 3. Lakukan instalasi Library LiquidCrystal_I2C
 4. Hubungkan Arduino yang telah Anda rakit dengan usb ke desktop Anda, lalu upload program arduino-bukalock.ino yang ada di folder arduino-bukalock
