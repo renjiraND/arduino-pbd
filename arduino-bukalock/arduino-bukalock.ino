@@ -73,6 +73,7 @@ void setup() {
   pinMode(13, OUTPUT);
   pinMode(pinLed, OUTPUT);
   myservo.attach(servoPin);  // attaches the servo on servoPin to the servo object
+  myservo.write(180);
   Serial.begin(9600); // Starts the serial communication
   SPI.begin();      // Initiate  SPI bus
   mfrc522.PCD_Init();   // Initiate MFRC522
@@ -82,7 +83,7 @@ void setup() {
 
 void loop() {
   lcd.begin();
-  analogWrite(pinLed, 100);
+  analogWrite(pinLed, 50);
   printIdle();
 
   // 7-segment
@@ -103,6 +104,7 @@ void servoLock()
   if(lock == false){
     printIdle();
     myservo.write(180);
+    analogWrite(pinLed, 50);
     delay(1500);
   }
   lock = true;

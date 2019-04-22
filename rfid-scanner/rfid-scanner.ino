@@ -26,12 +26,12 @@ void setup()
 void loop() 
 {
   // Look for new cards
-  if ( ! mfrc522.PICC_IsNewCardPresent()) 
+  if ( !mfrc522.PICC_IsNewCardPresent()) 
   {
     return;
   }
   // Select one of the cards
-  if ( ! mfrc522.PICC_ReadCardSerial()) 
+  if ( !mfrc522.PICC_ReadCardSerial()) 
   {
     return;
   }
