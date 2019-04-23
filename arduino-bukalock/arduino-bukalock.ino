@@ -43,7 +43,7 @@ int num_array[10][4] = {  { HIGH,LOW,LOW,LOW },     // 0
                           { HIGH,HIGH,HIGH,LOW },   // 6
                           { LOW,LOW,LOW,HIGH },     // 7
                           { HIGH,LOW,LOW,HIGH },    // 8
-                          { LOW,LOW,LOW,HIGH }};    // 9
+                          { LOW,LOW,LOW,LOW }};    // 9
 
 
 // Variables
@@ -57,7 +57,8 @@ int pos = 0;    // variable to store the servo position
 long duration;
 int distance;
 bool lock = true;
-int buttonState = 0;  
+int buttonState = 0;
+int trial = 3;  
 
 void servoLock();
 void servoUnlock();
@@ -85,12 +86,13 @@ void setup() {
 }
 
 void loop() {
+  checkTrial();
   lcd.begin();
   analogWrite(pinLed, 100);
   printIdle();
 
   // 7-segment
-  numWrite(3);
+  numWrite(trial);
 
   // Pushbutton
   checkPushButton();
@@ -100,6 +102,14 @@ void loop() {
 
   //RFID
   checkRFID();
+}
+
+void checkTrial()
+{
+  if (trial == 0) 
+  {
+    printFailed();
+  }
 }
 
 void servoLock()
@@ -127,10 +137,20 @@ void servoUnlock()
 // Fungsi untuk menuliskan angka pada 7-segment LED 
 void numWrite(int number) 
 {
+  if (number == 0)
+  {
+    digitalWrite(pinA, LOW);
+    digitalWrite(pinB, LOW);
+    digitalWrite(pinC, LOW);
+    digitalWrite(pinD, LOW);
+  }
+  else 
+  {
     digitalWrite(pinA, num_array[number-1][0]); 
     digitalWrite(pinB, num_array[number-1][1]); 
     digitalWrite(pinC, num_array[number-1][2]); 
     digitalWrite(pinD, num_array[number-1][3]);
+  }
 }
 
 void checkPushButton()
@@ -210,7 +230,7 @@ void printIdle()
   lcd.clear();
   lcd.print("Unlock Me!");
   lcd.setCursor(0,1);
-  lcd.print(String("Temperature : ") + String(DHT.temperature) + String("\u2103"));
+  lcd.print(String("Temperature ") + String(DHT.temperature) + String("`"));
 }
 
 void printSuccess()
@@ -219,6 +239,8 @@ void printSuccess()
   lcd.print(" Unlock Success");
   lcd.setCursor(0,1);
   lcd.print(" Welcome Home!");
+  trial = 3;
+  numWrite(trial);
 }
 
 void printFailed()
@@ -227,6 +249,9 @@ void printFailed()
   lcd.print(" Unlock Failed");
   lcd.setCursor(0,1);
   lcd.print("Please wait 5 mins");
+  delay(300000);
+  trial = 3;
+  numWrite(trial);
 }
 
 void printRFIDFailed()
@@ -235,4 +260,6 @@ void printRFIDFailed()
   lcd.print(" Unlock Failed");
   lcd.setCursor(0,1);
   lcd.print("Please register!");
+  trial -= 1;
+  numWrite(trial);
 }
