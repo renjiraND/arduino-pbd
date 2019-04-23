@@ -14,6 +14,7 @@
 #include <LiquidCrystal_I2C.h>
 #include <SPI.h>
 #include <MFRC522.h>
+#include <dht.h>
 
 // Defines Pins
 int val = 0;     // variable for reading the pin status 
@@ -28,6 +29,9 @@ const int rstPin = 9;
 const int ssPin = 10;
 const int servoPin = 14;
 int pinLed = 6;
+#define dhtPin A2
+
+dht DHT;
 
 // Defines LED 7-Segment Number
 int num_array[10][4] = {  { HIGH,LOW,LOW,LOW },     // 0
@@ -202,8 +206,11 @@ void checkRFID()
 
 void printIdle()
 {
+  DHT.read11(dhtPin);
   lcd.clear();
   lcd.print("Unlock Me!");
+  lcd.setCursor(0,1);
+  lcd.print(String("Temperature : ") + String(DHT.temperature) + String("\u2103"));
 }
 
 void printSuccess()
